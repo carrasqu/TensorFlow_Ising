@@ -11,15 +11,11 @@ hiddenunits1=400
 lamb=0.05 # regularization parameter
 
 # how does the data look like
-Ntemp=20
-samples_per_T=250
-Nord=20
+Ntemp=20 # number of different temperatures used in the simulation
+samples_per_T=250 # number of samples per temperature value
+Nord=20 # number of temperatures in the ordered phase
 
-#reading the data 
-mnist = input_data.read_data_sets(numberlabels,lx,'txt', one_hot=True)
-
-
-lamb=0.05 # regularization parameter
+#reading the data in the directory txt 
 mnist = input_data.read_data_sets(numberlabels,lx,'txt', one_hot=True)
 
 print "reading sets ok"
@@ -63,7 +59,7 @@ y_conv=O2
 
 #Train and Evaluate the Model
 
-# cost function to minimize
+# cost function to minimize (with L2 regularization)
 cross_entropy = tf.reduce_sum( -y_*tf.log(y_conv)-(1.0-y_)*tf.log(1.0-y_conv)  )+lamb*(tf.nn.l2_loss(W_1)+tf.nn.l2_loss(W_2) )
 
 #defining the optimizer
@@ -79,6 +75,8 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
 sess = tf.Session()
 sess.run(tf.initialize_all_variables())
 
+
+# training
 for i in range(10000):
 
   batch = mnist.train.next_batch(100)
@@ -93,6 +91,8 @@ for i in range(10000):
 print "test accuracy %g"%sess.run(accuracy, feed_dict={
     x: mnist.test.images, y_: mnist.test.labels})
 
+
+#producing data to get the plots we like
 ii=0
 for i in range(Ntemp):
   av=0.0
@@ -107,8 +107,8 @@ for i in range(Ntemp):
        
 
 for ii in range(Ntemp):
-  batch=(mnist.test.images[ii*samples_per_T:ii*samples_per_T+samples_per_T,:].reshape(samples_per_T,lx*lx), mnist.test.labels[ii*samples_per_T,:ii*samples_per_T+samples_per_T].reshape((samples_per_T,numberlabels)) )
-   train_accuracy = sess.run(accuracy,feed_dict={
+  batch=(mnist.test.images[ii*samples_per_T:ii*samples_per_T+samples_per_T,:].reshape(samples_per_T,lx*lx), mnist.test.labels[ii*samples_per_T:ii*samples_per_T+samples_per_T,:].reshape((samples_per_T,numberlabels)) )
+  train_accuracy = sess.run(accuracy,feed_dict={
         x:batch[0], y_: batch[1]}) 
   print ii, train_accuracy
 #  for j in range(samples_per_T):

@@ -93,6 +93,8 @@ print "test accuracy %g"%sess.run(accuracy, feed_dict={
 
 
 #producing data to get the plots we like
+
+#output of neural net
 ii=0
 for i in range(Ntemp):
   av=0.0
@@ -106,19 +108,12 @@ for i in range(Ntemp):
   print i,av   
        
 
+# accuracy vs temperature
 for ii in range(Ntemp):
   batch=(mnist.test.images[ii*samples_per_T:ii*samples_per_T+samples_per_T,:].reshape(samples_per_T,lx*lx), mnist.test.labels[ii*samples_per_T:ii*samples_per_T+samples_per_T,:].reshape((samples_per_T,numberlabels)) )
   train_accuracy = sess.run(accuracy,feed_dict={
         x:batch[0], y_: batch[1]}) 
   print ii, train_accuracy
-#  for j in range(samples_per_T):
-#  batch=(mnist.test.images[ii,:].reshape((1,lx*lx)),mnist.test.labels[ii,:].reshape((1,numberlabels)))
-#        res=sess.run(y_conv,feed_dict={x: batch[0], y_: batch[1]})
-#        av=av+res
-        #print ii, res
-#        ii=ii+1
-#  av=av/samples_per_T
-#  print i,av
 
 
 
